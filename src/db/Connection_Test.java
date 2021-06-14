@@ -24,10 +24,13 @@ public class Connection_Test {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+
 		}
 
 		finally {
 			DB.closeConnection();
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
 		}
 
 	}
