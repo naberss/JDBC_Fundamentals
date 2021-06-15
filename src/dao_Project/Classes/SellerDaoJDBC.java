@@ -1,6 +1,7 @@
 package dao_Project.Classes;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import dao_Project.Classes.Interface.SellerDao;
+import db.DB;
 import db.DbException;
 
 public class SellerDaoJDBC implements SellerDao {
@@ -22,8 +24,36 @@ public class SellerDaoJDBC implements SellerDao {
 	}
 
 	@Override
-	public void insert(Seller dept) {
-		// TODO Auto-generated method stub
+	public void insert(Seller seller) {
+		PreparedStatement ps = null;
+		try {
+			ps = con.prepareStatement("INSERT INTO SELLER VALUES (?,?,?,?,?,?)",
+					PreparedStatement.RETURN_GENERATED_KEYS);
+
+			ps.setInt(1, seller.getId());
+			ps.setString(2, seller.getName());
+			ps.setString(3, seller.getEmail());
+			ps.setDate(4, (Date) seller.getBirthDate());
+			ps.setDouble(5, seller.getBaseSalary());
+			ps.setInt(6, seller.getDept().getId());
+
+			int rowsAffected = ps.executeUpdate();
+
+			if (rowsAffected > 0) {
+				ResultSet rs = ps.getGeneratedKeys();
+				if (rs.next()) {
+					System.out.println("Inserted RowId: " + rs.getString(1));
+				}
+				DB.closeResultSet(rs);
+			} else {
+				System.out.println("No Rows Affected");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DB.closeStatement(ps);
+		}
 
 	}
 
@@ -92,6 +122,9 @@ public class SellerDaoJDBC implements SellerDao {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
 		}
 		return sellerList;
 	}
@@ -119,6 +152,9 @@ public class SellerDaoJDBC implements SellerDao {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(ps);
 		}
 		return sellerList;
 
@@ -154,6 +190,9 @@ public class SellerDaoJDBC implements SellerDao {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(ps);
 		}
 		return sellerList;
 
