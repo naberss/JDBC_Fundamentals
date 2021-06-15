@@ -12,6 +12,8 @@ public class Application {
 
 		System.out.println(dept.toString());
 
+		System.out.println("=== TEST 1: Seller findById ===");
+
 		SellerDao sellerDao = DaoFactory.createSellerDao();
 		Seller seller = sellerDao.findById(1);
 		System.out.println(seller);
