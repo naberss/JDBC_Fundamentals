@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,8 +65,35 @@ public class SellerDaoJDBC implements SellerDao {
 
 	@Override
 	public List<Seller> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		Statement st = null;
+		ResultSet rs = null;
+		List<Seller> sellerList = new ArrayList<>();
+		Map<Integer, Department> deptMap = new HashMap<>();
+		try {
+
+			st = con.createStatement();
+			rs = st.executeQuery(
+					"SELECT SELL.*, DEPT.NAME AS DEP_NAME FROM DEPARTMENT DEPT,SELLER SELL WHERE SELL.DEPARTMENT_ID = DEPT.DEPARTMENT_ID");
+
+			while (rs.next()) {
+				/*
+				 * Se o departamento já existir, a variável deptAux pega ele e ignora a
+				 * validação de inclusão no map, desta forma departamentos iguais não são
+				 * instanciados mais de uma vez
+				 */
+				Department deptAux = deptMap.get(rs.getInt("DEPARTMENT_ID"));
+				if (deptAux == null) {
+					deptAux = instantiateDepartment(rs);
+					deptMap.put(rs.getInt("DEPARTMENT_ID"), deptAux);
+				}
+
+				sellerList.add(instantiateSeller(rs, deptAux));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return sellerList;
 	}
 
 	public List<Seller> findByDepartment(Department dept) {

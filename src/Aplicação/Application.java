@@ -27,6 +27,16 @@ public class Application {
 		for (Seller rec : sellerList) {
 			System.out.println(rec);
 		}
+		
+		System.out.println("=== TEST 3: Seller findAll ===");
+		
+		sellerList = sellerDao.findAll();
+
+		for (Seller rec : sellerList) {
+			System.out.println(rec);
+		}		
+		
+		
 
 	}
 
