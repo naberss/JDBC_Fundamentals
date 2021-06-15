@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import dao_Project.Classes.Interface.SellerDao;
 import db.DbException;
@@ -63,6 +66,69 @@ public class SellerDaoJDBC implements SellerDao {
 	public List<Seller> findAll() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public List<Seller> findByDepartment(Department dept) {
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Seller> sellerList = new ArrayList<>();
+		try {
+			ps = con.prepareStatement(
+					"SELECT SELL.*, DEPT.NAME AS DEP_NAME FROM DEPARTMENT DEPT,SELLER SELL WHERE SELL.DEPARTMENT_ID = DEPT.DEPARTMENT_ID AND SELL.DEPARTMENT_ID = ?",
+					ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ps.setInt(1, dept.getId());
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				Department department = instantiateDepartment(rs);
+				rs.beforeFirst();
+				while (rs.next()) {
+					sellerList.add(instantiateSeller(rs, department));
+				}
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return sellerList;
+
+	}
+
+	public List<Seller> findByDepartment1(Department dept) {
+
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		List<Seller> sellerList = new ArrayList<>();
+		Map<Integer, Department> deptMap = new HashMap<>();
+		try {
+			ps = con.prepareStatement(
+					"SELECT SELL.*, DEPT.NAME AS DEP_NAME FROM DEPARTMENT DEPT,SELLER SELL WHERE SELL.DEPARTMENT_ID = DEPT.DEPARTMENT_ID AND SELL.DEPARTMENT_ID = ?");
+			ps.setInt(1, dept.getId());
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				/*
+				 * Se o departamento já existir, a variável deptAux pega ele e ignora a
+				 * validação de inclusão no map, desta forma departamentos iguais não são
+				 * instanciados mais de uma vez
+				 */
+				Department deptAux = deptMap.get(rs.getInt("DEPARTMENT_ID"));
+				if (deptAux == null) {
+					deptAux = instantiateDepartment(rs);
+					deptMap.put(rs.getInt("DEPARTMENT_ID"), deptAux);
+				}
+
+				sellerList.add(instantiateSeller(rs, deptAux));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return sellerList;
+
 	}
 
 	private Department instantiateDepartment(ResultSet rs) throws SQLException {
