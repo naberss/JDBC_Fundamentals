@@ -38,13 +38,14 @@ public class Application {
 			System.out.println(rec);
 		}
 
-		System.out.println("=== TEST 3: Seller findAll ===");
+		System.out.println("=== TEST 3: Seller Insert ===");
 
 		seller.setId(1589);
 
 		sellerDao.insert(seller);
 
 		System.out.println("=== TEST 4: Update ===");
+		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY");
 
 		seller.setName("MARCONES");
@@ -60,6 +61,14 @@ public class Application {
 		seller.setBaseSalary(130.0);
 
 		sellerDao.update(seller);
+		
+		System.out.println("=== TEST 3: Seller Delete ===");
+		
+		sellerDao.deleteById(1589);
+		
+		
+		
+		
 
 	}
 
