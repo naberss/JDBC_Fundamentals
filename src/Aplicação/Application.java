@@ -1,5 +1,7 @@
 package Aplicação;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import dao_Project.Classes.DaoFactory;
@@ -41,6 +43,23 @@ public class Application {
 		seller.setId(1589);
 
 		sellerDao.insert(seller);
+
+		System.out.println("=== TEST 4: Update ===");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY");
+
+		seller.setName("MARCONES");
+		seller.setEmail("MARQUIN_GENTEFINA@GMAIL.COM");
+		try {
+			seller.setBirthDate(sdf.parse("25/03/2001"));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		seller.getDept().setId(2);
+		seller.setBaseSalary(130.0);
+
+		sellerDao.update(seller);
 
 	}
 
