@@ -9,7 +9,7 @@ import dao_Project.Classes.Department;
 import dao_Project.Classes.Seller;
 import dao_Project.Classes.Interface.SellerDao;
 
-public class Application {
+public class Aplicação_Seller {
 
 	public static void main(String[] args) {
 		Department dept = new Department(1, "FINANCIAL");
